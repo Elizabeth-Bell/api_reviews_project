@@ -41,10 +41,10 @@ class Title(models.Model):
     category = models.ForeignKey(
         Category,
         verbose_name="Slug категории",
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
     )
-    genre = models.ManyToManyField(
-        Genre,
+    genres = models.ManyToManyField(Genre, through='TitleGenres',
+                                    verbose_name='Slug жанра'),
     )
     name = models.CharField(
         "Название",
@@ -143,3 +143,11 @@ class Comment(models.Model):
     # сортировка комментариев
     class Meta:
         ordering = ["pub_date"]
+
+
+class TitleGenres(models.Model):
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.genre} {self.title}'
