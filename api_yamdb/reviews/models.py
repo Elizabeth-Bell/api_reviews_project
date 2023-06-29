@@ -38,5 +38,10 @@ class TitleGenres(models.Model):
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = [
+            'genre', 'title'
+        ]
+
     def __str__(self):
         return f'{self.genre} {self.title}'
