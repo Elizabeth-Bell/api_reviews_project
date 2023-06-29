@@ -20,7 +20,7 @@ class Title(models.Model):
     year = models.IntegerField(verbose_name='Год выпуска')
     description = models.TextField(blank=True, verbose_name='Описание')
     genres = models.ManyToManyField(Genre, through='TitleGenres',
-                                   verbose_name='Slug жанра')
+                                    verbose_name='Slug жанра')
     #category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  #related_name='titles',
                                  #verbose_name='Slug категории'
