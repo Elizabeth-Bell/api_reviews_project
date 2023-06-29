@@ -1,7 +1,6 @@
 from reviews.models import Title, Genre, TitleGenres
 
 from rest_framework import serializers
-from rest_framework.relations import SlugRelatedField
 
 
 class GenreSerializer(serializers.ModelSerializer):
