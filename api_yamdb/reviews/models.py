@@ -29,7 +29,7 @@ class Title(models.Model):
 
 
 class TitleGenres(models.Model):
-    genre = models.ForeignKey(Genre, on_delete=models.SET_NULL)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
     def __str__(self):
