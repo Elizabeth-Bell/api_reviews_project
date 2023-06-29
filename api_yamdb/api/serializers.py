@@ -2,6 +2,7 @@ from reviews.models import Title, Genre, TitleGenres
 
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
+import datetime as dt
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -18,6 +19,13 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = ('name', 'year', 'description', 'genres')  #'category'
         model = Title
 
+    def validate_year(self, value):
+        year = dt.date.today().year
+        if not (value <= year):
+            raise serializers.ValidationError('Произведения '
+                                              'из будущего добавлять нельзя!')
+        return value
+
     def create(self, validated_data):
         genres = validated_data.pop('genres')
         title = Title.objects.create(**validated_data)
@@ -28,3 +36,4 @@ class TitleSerializer(serializers.ModelSerializer):
                 genre=current_genre, title=title
             )
         return title
+
