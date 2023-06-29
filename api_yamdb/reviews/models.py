@@ -12,7 +12,13 @@ class Genre(models.Model):
 
 
 class Category(models.Model):
-    pass
+    name = models.TextField(max_length=256, verbose_name='Название категории')
+    slug = models.SlugField(max_length=50, verbose_name='Слаг категории',
+                            unique=True)
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
 
 
 class Title(models.Model):
@@ -21,10 +27,10 @@ class Title(models.Model):
     description = models.TextField(blank=True, verbose_name='Описание')
     genres = models.ManyToManyField(Genre, through='TitleGenres',
                                     verbose_name='Slug жанра')
-    #category = models.ForeignKey(Category, on_delete=models.SET_NULL,
-                                 #related_name='titles',
-                                 #verbose_name='Slug категории'
-                                 #)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL,
+                                 related_name='titles',
+                                 verbose_name='Slug категории'
+                                 )
 
     class Meta:
         verbose_name = 'Произведение'
