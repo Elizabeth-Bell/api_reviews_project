@@ -5,7 +5,7 @@ from .models import Title, Genre, Category
 
 @admin.register(Title)
 class TitleAdmin(admin.ModelAdmin):
-    list_display = ('name', 'year', 'description') #'category'
+    list_display = ('name', 'year', 'description', 'categories')
     search_fields = ('name', 'description',)
     empty_value_display = '-пусто-'
 
