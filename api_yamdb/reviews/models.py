@@ -45,7 +45,6 @@ class Title(models.Model):
     )
     genres = models.ManyToManyField(Genre, through='TitleGenres',
                                     verbose_name='Slug жанра'),
-    )
     name = models.CharField(
         "Название",
         max_length=256,
