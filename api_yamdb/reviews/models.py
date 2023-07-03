@@ -17,7 +17,7 @@ class Category(models.Model):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
@@ -33,7 +33,7 @@ class Genre(models.Model):
         verbose_name = "Жанр"
         verbose_name_plural = "Жанры"
 
-    def str(self):
+    def __str__(self):
         return self.slug
 
 
@@ -41,11 +41,10 @@ class Title(models.Model):
     category = models.ForeignKey(
         Category,
         verbose_name="Slug категории",
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
     )
     genres = models.ManyToManyField(Genre, through='TitleGenres',
-                                    verbose_name='Slug жанра'),
-    )
+                                    verbose_name='Slug жанра')
     name = models.CharField(
         "Название",
         max_length=256,
@@ -62,7 +61,7 @@ class Title(models.Model):
         verbose_name_plural = "Произведения"
         default_related_name = "titles"
 
-    def str(self):
+    def __str__(self):
         return self.name
 
 
