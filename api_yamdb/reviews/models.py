@@ -1,22 +1,19 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
 from users.models import CustomUser
 from .validators import validate_year
 
 
 class Category(models.Model):
-    name = models.CharField(
-        "Название",
-        max_length=256,
-    )
-    slug = models.SlugField("Слаг", max_length=50, unique=True)
+    name = models.CharField(max_length=256, verbose_name='Название категории')
+    slug = models.SlugField(max_length=50, verbose_name='Слаг категории',
+                            unique=True)
 
     class Meta:
         ordering = ("name",)
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
-
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+        
     def __str__(self):
         return self.name
 
@@ -43,12 +40,10 @@ class Title(models.Model):
                                   null=True)
     genres = models.ManyToManyField(Genre, through='TitleGenres',
                                     verbose_name='Slug жанра')
-    category = models.ForeignKey(
-        Category,
-        verbose_name='Slug категории',
-        on_delete=models.CASCADE,
-        related_name='titles'
-    )
+    categories = models.ForeignKey(Category, on_delete=models.CASCADE,
+                                   related_name='titles',
+                                   verbose_name='Slug категории'
+                                   )
 
     class Meta:
         ordering = ("year", "name")
