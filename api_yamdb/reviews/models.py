@@ -22,38 +22,33 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(
-        "Название",
-        max_length=256,
-    )
-    slug = models.SlugField("Слаг", max_length=50, unique=True)
-
+    name = models.CharField(max_length=256, verbose_name='Название жанра')
+    slug = models.SlugField(max_length=50, verbose_name='Слаг жанра',
+                            unique=True)
+    
     class Meta:
-        ordering = ("name",)
-        verbose_name = "Жанр"
-        verbose_name_plural = "Жанры"
+        ordering = ('name',)
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
 
     def __str__(self):
         return self.slug
 
 
 class Title(models.Model):
-    category = models.ForeignKey(
-        Category,
-        verbose_name="Slug категории",
-        on_delete=models.CASCADE,
-    )
+    name = models.CharField(max_length=256, verbose_name='Название')
+    year = models.IntegerField(verbose_name='Год выпуска',
+                              validators=[validate_year])
+    description = models.TextField(blank=True, verbose_name='Описание',
+                                  null=True)
     genres = models.ManyToManyField(Genre, through='TitleGenres',
                                     verbose_name='Slug жанра')
-    name = models.CharField(
-        "Название",
-        max_length=256,
+    category = models.ForeignKey(
+        Category,
+        verbose_name='Slug категории',
+        on_delete=models.CASCADE,
+        related_name='titles'
     )
-    year = models.IntegerField(
-        "Год выпуска",
-        validators=[validate_year]
-    )
-    description = models.TextField("Описание", blank=True, null=True)
 
     class Meta:
         ordering = ("year", "name")
@@ -147,6 +142,11 @@ class Comment(models.Model):
 class TitleGenres(models.Model):
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = [
+            'genre', 'title'
+        ]
 
     def __str__(self):
         return f'{self.genre} {self.title}'
