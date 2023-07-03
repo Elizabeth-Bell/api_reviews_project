@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from .views import TitleViewSet, GenreViewSet, CategoryViewSet
 
+
 app_name = 'api'
 
 v1_router = DefaultRouter()

@@ -1,8 +1,10 @@
 from reviews.models import Title, Genre, Category
+
 from rest_framework import viewsets, filters, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import TitleSerializer, GenreSerializer, CategorySerializer
+
 
 
 class ListCreateDestroyViewSet(mixins.ListModelMixin,
