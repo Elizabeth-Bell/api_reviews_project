@@ -5,22 +5,26 @@ from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import AccessToken
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (filters, generics, pagination, permissions, status,
-                            viewsets)
+                            viewsets, mixins)
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 
 from .mixins import BaseListCreateDestroyMixin
 from users.models import CustomUser
-from reviews.models import Category, Genre, Title, Review
+from reviews.models import (Category, Genre, Title, Review,
+                            Comment)
 from .permissions import (IsAdmin, IsAdminOrReadOnly,
                           IsUserAdminModeratorOrReadOnly)
 from .serializers import (AboutSerializer, CreateUserSerializer,
                           TokenSerializer, UserSerializer,
                           CategorySerializer, GenreSerializer,
                           TitlePostSerializer, TitleReadSerializer,
-                          ReviewSerializer, CommentSerializer)
+                          ReviewSerializer, CommentsSerializer)
 from .filters import TitleFilter
 from .pagination import Pagination
+
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
@@ -93,8 +97,76 @@ def crate_token(request):
         )
     return Response("Не верный токен", status=status.HTTP_400_BAD_REQUEST)
 
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    """ViewSet для модели Review"""
+    serializer_class = ReviewSerializer
+    permission_classes = (
+        IsAuthenticatedOrReadOnly,
+        IsAdminModeratorAuthorOrReadOnly,
+    )
+
+    def title_get_or_404(self):
+        return get_object_or_404(
+            Title,
+            id=self.kwargs.get('title_id'))
+
+    def get_queryset(self):
+        title = self.title_get_or_404()
+        return title.reviews.all()
+
+    def perform_create(self, serializer):
+        title = self.title_get_or_404()
+        serializer.is_valid(raise_exception=True)
+        serializer.save(author=self.request.user, title=title)
+        return Response(status=status.HTTP_201_CREATED)
+    
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    """ViewSet для модели Comments"""
+    serializer_class = CommentsSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,
+                          IsAdminModeratorAuthorOrReadOnly,)
+
+    def review_get_or_404(self):
+        return get_object_or_404(
+            Review,
+            id=self.kwargs.get('review_id'),
+            title__id=self.kwargs.get('title_id'),
+        )
+
+    def perform_create(self, serializer):
+        review = self.review_get_or_404()
+        serializer.save(author=self.request.user, review=review)
+
+    def get_queryset(self):
+        review = self.review_get_or_404()
+        return review.comments.all()
+      
+
+class ListCreateDestroyViewSet(mixins.ListModelMixin,
+                               mixins.CreateModelMixin,
+                               mixins.DestroyModelMixin,
+                               viewsets.GenericViewSet):
+    lookup_field = 'slug'
+
+
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'year') #'category', 'genre'
+    filterset_fields = ('name', 'year', 'genres__slug', 'categories__slug')
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class CategoryViewSet(ListCreateDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
