@@ -131,3 +131,6 @@ SIMPLE_JWT = {
 
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
+
+MIN_SCORE_VALUE = 1
+MAX_SCORE_VALUE = 10
