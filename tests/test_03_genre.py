@@ -25,7 +25,7 @@ class Test03GenreAPI:
         url = '/api/v1/genres/'
 
         data = {}
-        response = admin_client.post(url, data=data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             f'Если POST-запрос администратора к `{url}` '
             'содержит некорректные данные - должен вернуться ответ со '
@@ -33,7 +33,7 @@ class Test03GenreAPI:
         )
 
         data = {'name': 'Ужасы', 'slug': 'horror'}
-        response = admin_client.post(url, data=data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.CREATED, (
             f'Если POST-запрос администратора к `{url}` содержит корректные '
             'данные - должен вернуться ответ со статусом 201.'
@@ -41,7 +41,7 @@ class Test03GenreAPI:
         genres_count += 1
 
         data = {'name': 'Триллер', 'slug': 'horror'}
-        response = admin_client.post(url, data=data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             f'Если в POST-запросе администратора, отправленном к `{url}`, '
             'передан уже существующий `slug` - должен вернуться ответ со '
@@ -49,7 +49,7 @@ class Test03GenreAPI:
         )
 
         post_data = {'name': 'Комедия', 'slug': 'comedy'}
-        response = admin_client.post(url, data=post_data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.CREATED, (
             f'Если POST-запрос администратора, отправленный к `{url}`, '
             'содержит корректные данные - должен вернуться ответ со статусом '
@@ -76,7 +76,7 @@ class Test03GenreAPI:
     @pytest.mark.parametrize('data,massage', check_name_and_slug_patterns)
     def test_03_category_fields_validation(self, data, massage, admin_client):
         url = '/api/v1/genres/'
-        response = admin_client.post(url, data=data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             massage[0].format(url=url)
         )

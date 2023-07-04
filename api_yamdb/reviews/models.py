@@ -38,9 +38,9 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название')
     year = models.IntegerField(verbose_name='Год выпуска',
-                              validators=[validate_year])
+                               validators=[validate_year])
     description = models.TextField(blank=True, verbose_name='Описание',
-                                  null=True)
+                                   null=True)
     genres = models.ManyToManyField(Genre, through='TitleGenres',
                                     verbose_name='Slug жанра')
     categories = models.ForeignKey(Category, on_delete=models.CASCADE,
@@ -54,7 +54,6 @@ class Title(models.Model):
         verbose_name_plural = "Произведения"
         default_related_name = "titles"
 
-        
     def __str__(self):
         return self.name[:15]
 
@@ -71,6 +70,7 @@ class Review(models.Model):
         verbose_name='Текст',
     )
     author = models.ForeignKey(
+        CustomUser,
         on_delete=models.CASCADE,
         verbose_name='Автор',
         related_name='reviews',
@@ -78,7 +78,7 @@ class Review(models.Model):
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
         validators=[
-            MinValueValidator(settings.MIN_SCORE_VALUE , 'Только значения от 1 до 10'),
+            MinValueValidator(settings.MIN_SCORE_VALUE, 'Только значения от 1 до 10'),
             MaxValueValidator(settings.MAX_SCORE_VALUE, 'Только значения от 1 до 10')
         ]
     )
@@ -115,6 +115,7 @@ class Comment(models.Model):
         verbose_name='Текст',
     )
     author = models.ForeignKey(
+        CustomUser,
         on_delete=models.CASCADE,
         verbose_name='Пользователь',
         related_name='comments',
@@ -130,10 +131,15 @@ class Comment(models.Model):
         verbose_name_plural = 'Комментарии'
         ordering = ('-pub_date',)
 
+
+class TitleGenres(models.Model):
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
+
     class Meta:
         unique_together = [
             'genre', 'title'
         ]
 
     def __str__(self):
-        return self.text[:15]
+        return f'{self.genre} {self.title}'
