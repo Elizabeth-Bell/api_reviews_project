@@ -18,10 +18,8 @@ from .permissions import (IsAdmin, IsAdminOrReadOnly,
 from .serializers import (AboutSerializer, CreateUserSerializer,
                           TokenSerializer, UserSerializer,
                           CategorySerializer, GenreSerializer,
-                          TitlePostSerializer, TitleReadSerializer,
-                          ReviewSerializer, CommentsSerializer)
-from .filters import TitleFilter
-from .pagination import Pagination
+                          ReviewSerializer, CommentsSerializer,
+                          TitleSerializer)
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
@@ -63,7 +61,7 @@ class UserViewSet(viewsets.ModelViewSet):
 class CreateUserView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request):
+    def post(self, request, **kwargs):
         serializer = CreateUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data.get("email")
@@ -103,7 +101,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = (
         IsAuthenticatedOrReadOnly,
-        IsAdminModeratorAuthorOrReadOnly,
+        IsUserAdminModeratorOrReadOnly
     )
 
     def title_get_or_404(self):
@@ -126,7 +124,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Comments"""
     serializer_class = CommentsSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,
-                          IsAdminModeratorAuthorOrReadOnly,)
+                          IsUserAdminModeratorOrReadOnly,)
 
     def review_get_or_404(self):
         return get_object_or_404(

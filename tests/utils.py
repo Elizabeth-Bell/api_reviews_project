@@ -133,7 +133,7 @@ def check_permissions(client, url, data, user_role, objects,
                       expected_status):
     sufix = 'slug' if 'slug' in objects[0] else 'id'
 
-    response = client.post(url, data=data)
+    response = client.post(url)
     assert response.status_code == expected_status, (
         f'Проверьте, что POST-запрос {user_role} к `{url}` возвращает ответ '
         f'со статусом {expected_status}.'
@@ -152,9 +152,7 @@ def check_permissions(client, url, data, user_role, objects,
 
 def create_single_review(client, title_id, text, score):
     data = {'text': text, 'score': score}
-    response = client.post(
-        f'/api/v1/titles/{title_id}/reviews/', data=data
-    )
+    response = client.post(f'/api/v1/titles/{title_id}/reviews/')
     assert response.status_code == HTTPStatus.CREATED, (
         'Если POST-запрос авторизованного пользователя к '
         '`/api/v1/titles/{title_id}/reviews/` содержит корректные данные - '
@@ -165,10 +163,7 @@ def create_single_review(client, title_id, text, score):
 
 def create_single_comment(client, title_id, review_id, text):
     data = {'text': text}
-    response = client.post(
-        f'/api/v1/titles/{title_id}/reviews/{review_id}/comments/',
-        data=data
-    )
+    response = client.post(f'/api/v1/titles/{title_id}/reviews/{review_id}/comments/')
     assert response.status_code == HTTPStatus.CREATED, (
         'Если POST-запрос авторизованного пользователя к '
         '`/api/v1/titles/{title_id}/reviews/{review_id}/comments/` содержит '
@@ -182,7 +177,7 @@ def create_categories(admin_client):
         'name': 'Фильм',
         'slug': 'films'
     }
-    response = admin_client.post('/api/v1/categories/', data=data1)
+    response = admin_client.post('/api/v1/categories/')
     assert response.status_code == HTTPStatus.CREATED, (
         'Если POST-запрос администратора к `/api/v1/categories/` '
         'содержит корректные данные - должен вернуться ответ со статусом 201.'
@@ -191,7 +186,7 @@ def create_categories(admin_client):
         'name': 'Книги',
         'slug': 'books'
     }
-    admin_client.post('/api/v1/categories/', data=data2)
+    admin_client.post('/api/v1/categories/')
     return [data1, data2]
 
 
@@ -199,17 +194,17 @@ def create_genre(admin_client):
     result = []
     data = {'name': 'Ужасы', 'slug': 'horror'}
     result.append(data)
-    response = admin_client.post('/api/v1/genres/', data=data)
+    response = admin_client.post('/api/v1/genres/')
     assert response.status_code == HTTPStatus.CREATED, (
         'Если POST-запрос администратора к `/api/v1/genres/` содержит '
         'корректные данные - должен вернуться ответ со статусом 201.'
     )
     data = {'name': 'Комедия', 'slug': 'comedy'}
     result.append(data)
-    admin_client.post('/api/v1/genres/', data=data)
+    admin_client.post('/api/v1/genres/')
     data = {'name': 'Драма', 'slug': 'drama'}
     result.append(data)
-    admin_client.post('/api/v1/genres/', data=data)
+    admin_client.post('/api/v1/genres/')
     return result
 
 
@@ -224,7 +219,7 @@ def create_titles(admin_client):
         'category': categories[0]['slug'],
         'description': 'I`ll be back'
     }
-    response = admin_client.post('/api/v1/titles/', data=data)
+    response = admin_client.post('/api/v1/titles/')
     assert response.status_code == HTTPStatus.CREATED, (
         'Если POST-запрос администратора к `/api/v1/titles/` содержит '
         'корректные данные - должен вернуться ответ со статусом 201.'
@@ -238,7 +233,7 @@ def create_titles(admin_client):
         'category': categories[1]['slug'],
         'description': 'Yippie ki yay...'
     }
-    response = admin_client.post('/api/v1/titles/', data=data)
+    response = admin_client.post('/api/v1/titles/')
     data['id'] = response.json()['id']
     result.append(data)
     return result, categories, genres

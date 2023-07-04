@@ -2,9 +2,9 @@ import re
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from reviews.models import (Title, Genre,
-                            TitleGenres, Category,
-                            Comment, Review)
+from reviews.models import (Title, Genre, Category,
+                            Comment, Review,
+                            TitleGenres)
 
 from django.utils import timezone
 from rest_framework import serializers

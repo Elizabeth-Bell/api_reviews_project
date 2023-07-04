@@ -8,12 +8,12 @@ from users.models import CustomUser
 
 PATH = {
     Category: 'static/data/category.csv',
+    CustomUser: 'static/data/users.csv',
     Comment: 'static/data/comments.csv',
     Genre: 'static/data/genre.csv',
     TitleGenres: 'static/data/genre_title.csv',
     Review: 'static/data/review.csv',
     Title: 'static/data/titles.csv',
-    CustomUser: 'static/data/users.csv',
 }
 
 

@@ -7,7 +7,7 @@ from .models import Category, Genre, Title
 class TitleAdmin(admin.ModelAdmin):
     list_display = ('name', 'year', 'description', 'display_genre', 'categories')
     search_fields = ('name', 'description',)
-    list_filter = ('category', 'year')
+    list_filter = ('categories', 'year')
     empty_value_display = '-пусто-'
     
     def display_genre(self, obj):

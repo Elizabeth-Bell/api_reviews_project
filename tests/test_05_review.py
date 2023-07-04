@@ -31,9 +31,7 @@ class Test05ReviewAPI:
             'статусом 200.'
         )
 
-        response = client.post(
-            f'/api/v1/titles/{titles[0]["id"]}/reviews/', data=new_data
-        )
+        response = client.post(f'/api/v1/titles/{titles[0]["id"]}/reviews/')
         assert response.status_code == HTTPStatus.UNAUTHORIZED, (
             'Проверьте, что POST-запрос неавторизованного пользователя к '
             '`/api/v1/titles/{title_id}/reviews/` возвращает ответ со '
@@ -65,9 +63,7 @@ class Test05ReviewAPI:
         title_0_reviews_count = 0
 
         data = {}
-        response = user_client.post(
-            f'/api/v1/titles/{titles[0]["id"]}/reviews/', data=data
-        )
+        response = user_client.post(f'/api/v1/titles/{titles[0]["id"]}/reviews/', )
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если POST-запрос авторизованного пользователя к '
             '`/api/v1/titles/{title_id}/reviews/` содержит некорректные '
@@ -90,9 +86,7 @@ class Test05ReviewAPI:
             'text': 'Шляпа',
             'score': 1
         }
-        response = admin_client.post(
-            f'/api/v1/titles/{titles[0]["id"]}/reviews/', data=data
-        )
+        response = admin_client.post(f'/api/v1/titles/{titles[0]["id"]}/reviews/')
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Проверьте, что при попытке пользователя создать второй отзыв на '
             'одно и то же произведение POST-запрос к '
@@ -149,7 +143,7 @@ class Test05ReviewAPI:
         )
 
         data = {'text': 'На один раз', 'score': 4}
-        response = user_client.post('/api/v1/titles/999/reviews/', data=data)
+        response = user_client.post('/api/v1/titles/999/reviews/', )
         assert response.status_code == HTTPStatus.NOT_FOUND, (
             'Проверьте, что POST-запрос авторизованного пользователя к '
             '`/api/v1/titles/{title_id}/reviews/` для несуществующего '
@@ -157,9 +151,7 @@ class Test05ReviewAPI:
         )
 
         data = {'text': 'Супер!', 'score': 11}
-        response = user_client.post(
-            f'/api/v1/titles/{titles[1]["id"]}/reviews/', data=data
-        )
+        response = user_client.post(f'/api/v1/titles/{titles[1]["id"]}/reviews/', )
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если в POST-запросе авторизованного пользователя к '
             '`/api/v1/titles/{title_id}/reviews/` передана оценка выше 10 '
@@ -167,9 +159,7 @@ class Test05ReviewAPI:
         )
 
         data = {'text': 'Ужас!', 'score': 0}
-        response = user_client.post(
-            f'/api/v1/titles/{titles[0]["id"]}/reviews/', data=data
-        )
+        response = user_client.post(f'/api/v1/titles/{titles[0]["id"]}/reviews/', )
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если в POST-запросе авторизованного пользователя к '
             '`/api/v1/titles/{title_id}/reviews/` передана оценка ниже 1 '
