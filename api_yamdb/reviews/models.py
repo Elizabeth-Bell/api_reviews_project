@@ -1,4 +1,5 @@
 from django.db import models
+
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -46,15 +47,16 @@ class Title(models.Model):
                                    related_name='titles',
                                    verbose_name='Slug категории'
                                    )
-
+    
     class Meta:
         ordering = ("year", "name")
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
         default_related_name = "titles"
 
+        
     def __str__(self):
-        return self.name
+        return self.name[:15]
 
 
 class Review(models.Model):
