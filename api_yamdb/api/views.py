@@ -1,5 +1,6 @@
-from reviews.models import Review, Title
-from rest_framework import filters, viewsets, status
+from reviews.models import (Review, Title,
+                            Genre, Category)
+from rest_framework import filters, viewsets, status, mixins
 from django_filters.rest_framework import DjangoFilterBackend
 from api.permissions import (IsAdminModeratorAuthorOrReadOnly,
                              IsAdminModeratorAuthorOrReadOnly,
@@ -9,14 +10,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from .serializers import (CommentsSerializer, ReviewSerializer,
-                          TitleSerializer)
+                          TitleSerializer, GenreSerializer, CategorySerializer)
 
-
-class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
-    serializer_class = TitleSerializer
-    filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'year') #'category', 'genre'
 
 class ReviewViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Review"""
@@ -62,3 +57,31 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         review = self.review_get_or_404()
         return review.comments.all()
+      
+
+class ListCreateDestroyViewSet(mixins.ListModelMixin,
+                               mixins.CreateModelMixin,
+                               mixins.DestroyModelMixin,
+                               viewsets.GenericViewSet):
+    lookup_field = 'slug'
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.all()
+    serializer_class = TitleSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('name', 'year', 'genres__slug', 'categories__slug')
+
+
+class GenreViewSet(viewsets.ModelViewSet):
+    queryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
+
+class CategoryViewSet(ListCreateDestroyViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)

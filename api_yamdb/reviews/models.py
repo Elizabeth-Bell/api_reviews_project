@@ -1,10 +1,60 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
-# Create your models here.
 
-MIN = 1
-MAX = 10
+from users.models import CustomUser
+from .validators import validate_year
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=256, verbose_name='Название категории')
+    slug = models.SlugField(max_length=50, verbose_name='Слаг категории',
+                            unique=True)
+
+    class Meta:
+        ordering = ("name",)
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+        
+    def __str__(self):
+        return self.name
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=256, verbose_name='Название жанра')
+    slug = models.SlugField(max_length=50, verbose_name='Слаг жанра',
+                            unique=True)
+    
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+    def __str__(self):
+        return self.slug
+
+
+class Title(models.Model):
+    name = models.CharField(max_length=256, verbose_name='Название')
+    year = models.IntegerField(verbose_name='Год выпуска',
+                              validators=[validate_year])
+    description = models.TextField(blank=True, verbose_name='Описание',
+                                  null=True)
+    genres = models.ManyToManyField(Genre, through='TitleGenres',
+                                    verbose_name='Slug жанра')
+    categories = models.ForeignKey(Category, on_delete=models.CASCADE,
+                                   related_name='titles',
+                                   verbose_name='Slug категории'
+                                   )
+
+    class Meta:
+        ordering = ("year", "name")
+        verbose_name = "Произведение"
+        verbose_name_plural = "Произведения"
+        default_related_name = "titles"
+
+    def __str__(self):
+        return self.name
 
 
 class Review(models.Model):
@@ -26,8 +76,8 @@ class Review(models.Model):
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
         validators=[
-            MinValueValidator(MIN, 'Только значения от 1 до 10'),
-            MaxValueValidator(MAX, 'Только значения от 1 до 10')
+            MinValueValidator(settings.MIN_SCORE_VALUE , 'Только значения от 1 до 10'),
+            MaxValueValidator(settings.MAX_SCORE_VALUE, 'Только значения от 1 до 10')
         ]
     )
     pub_date = models.DateTimeField(
@@ -77,6 +127,11 @@ class Comment(models.Model):
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
         ordering = ('-pub_date',)
+
+    class Meta:
+        unique_together = [
+            'genre', 'title'
+        ]
 
     def __str__(self):
         return self.text[:15]
