@@ -43,7 +43,7 @@ class Title(models.Model):
                                    null=True)
     genres = models.ManyToManyField(Genre, through='TitleGenres',
                                     verbose_name='Slug жанра')
-    categories = models.ForeignKey(Category, on_delete=models.CASCADE,
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,
                                    related_name='titles',
                                    verbose_name='Slug категории'
                                    )

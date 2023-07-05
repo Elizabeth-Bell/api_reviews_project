@@ -94,10 +94,10 @@ class TokenSerializer(serializers.Serializer):
 
 class TitleSerializer(serializers.ModelSerializer):
     genres = SlugRelatedField(many=True, slug_field='slug', queryset=Genre.objects.all())
-    categories = SlugRelatedField(slug_field='slug', queryset=Category.objects.all())
+    category = SlugRelatedField(slug_field='slug', queryset=Category.objects.all())
 
     class Meta:
-        fields = ('name', 'year', 'description', 'genres', 'categories')
+        fields = ('name', 'year', 'description', 'genres', 'category')
         model = Title
 
 
