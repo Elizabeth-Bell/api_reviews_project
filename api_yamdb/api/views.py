@@ -19,6 +19,7 @@ from .serializers import (AboutSerializer, CreateUserSerializer,
                           TokenSerializer, UserSerializer,
                           CategorySerializer, GenreSerializer,
                           ReviewSerializer, CommentsSerializer,
+                          ReadOnlyTitleSerializer,
                           TitleSerializer)
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -150,10 +151,17 @@ class ListCreateDestroyViewSet(mixins.ListModelMixin,
 
 
 class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')).all()
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name', 'year', 'genres__slug', 'categories__slug')
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ReadOnlyTitleSerializer
+        return TitleSerializer
 
 
 class GenreViewSet(viewsets.ModelViewSet):
