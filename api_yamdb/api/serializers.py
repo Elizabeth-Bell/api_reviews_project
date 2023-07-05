@@ -95,9 +95,10 @@ class TokenSerializer(serializers.Serializer):
 class TitleSerializer(serializers.ModelSerializer):
     genres = SlugRelatedField(many=True, slug_field='slug', queryset=Genre.objects.all())
     categories = SlugRelatedField(slug_field='slug', queryset=Category.objects.all())
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
-        fields = ('name', 'year', 'description', 'genres', 'categories')
+        fields = '__all__'
         model = Title
 
 
