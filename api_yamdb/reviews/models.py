@@ -50,6 +50,7 @@ class Title(models.Model):
                                  verbose_name='Slug категории'
                                  )
 
+
     class Meta:
         ordering = ("year", "name")
         verbose_name = "Произведение"

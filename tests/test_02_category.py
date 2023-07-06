@@ -25,7 +25,7 @@ class Test02CategoryAPI:
 
         url = '/api/v1/categories/'
         data = {}
-        response = admin_client.post(url, data=data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             f'Если POST-запрос администратора, отправленный к `{url}`, '
             'содержит некорректные данные - должен вернуться ответ со '
@@ -36,7 +36,7 @@ class Test02CategoryAPI:
             'name': 'Фильм',
             'slug': 'films'
         }
-        response = admin_client.post(url, data=data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.CREATED, (
             f'Если POST-запрос администратора, отправленный к `{url}`, '
             'содержит корректные данные - должен вернуться ответ со статусом '
@@ -48,7 +48,7 @@ class Test02CategoryAPI:
             'name': 'Новые фильмы',
             'slug': 'films'
         }
-        response = admin_client.post(url, data=data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             f'Если в POST-запросе администратора к `{url}` '
             'передан уже существующий `slug` - должен вернуться ответ со '
@@ -59,7 +59,7 @@ class Test02CategoryAPI:
             'name': 'Книги',
             'slug': 'books'
         }
-        response = admin_client.post(url, data=post_data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.CREATED, (
             f'Если POST-запрос администратора к `{url}` '
             'содержит корректные данные - должен вернуться ответ со статусом '
@@ -86,7 +86,7 @@ class Test02CategoryAPI:
     @pytest.mark.parametrize('data,massage', check_name_and_slug_patterns)
     def test_03_category_fields_validation(self, data, massage, admin_client):
         url = '/api/v1/categories/'
-        response = admin_client.post(url, data=data)
+        response = admin_client.post(url)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             massage[0].format(url=url)
         )

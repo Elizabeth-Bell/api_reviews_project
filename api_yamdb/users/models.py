@@ -35,11 +35,9 @@ class CustomUserManager(BaseUserManager):
         )
         user.role = role
         user.bio = bio
-        # user.is_admin = True
         user.is_active = True
         user.is_staff = True
         user.is_superuser = True
-        # user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -60,7 +58,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False,
                                        verbose_name='Суперпользователь')
     username = models.CharField(
-        # _('username'),
         verbose_name='имя пользователя',
         max_length=150,
         unique=True,
@@ -76,7 +73,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     )
 
     bio = models.TextField(
-        # max_length=50,
         blank=True,
     )
     role = models.CharField(
@@ -84,8 +80,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         choices=USER_ROLE_CHOICES,
         default='user',
     )
-
-# Добавил это должнобыть в базе
     date_joined = models.DateTimeField(
         verbose_name='дата создания',
         auto_now_add=True
@@ -124,13 +118,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def is_admin(self):
         return (self.role == self.ADMINISTRATOR
                 or self.is_superuser
-                # or self.is_staff
-                )
+               )
 
     def __str__(self):
         return self.username
-
-# Ну и тут добавлю
 
     def has_perm(self, perm, obj=None):
         return self.is_admin

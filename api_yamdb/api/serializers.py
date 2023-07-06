@@ -1,3 +1,4 @@
+import re
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -26,9 +27,9 @@ class CategorySerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     genres = SlugRelatedField(many=True, slug_field='slug', queryset=Genre.objects.all())
     category = SlugRelatedField(slug_field='slug', queryset=Category.objects.all())
+    rating = serializers.IntegerField(read_only=True)
 
     class Meta:
-        #  добавил id
         fields = ('id', 'name', 'year', 'description', 'genres', 'category')
         model = Title
 
