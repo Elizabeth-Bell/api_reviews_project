@@ -29,7 +29,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         queryset = get_object_or_404(Title, id=title_id)
         serializer.save(author=self.request.user, title=queryset)
         return Response(status=status.HTTP_201_CREATED)
-    
+
 
 class CommentsViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Comments"""

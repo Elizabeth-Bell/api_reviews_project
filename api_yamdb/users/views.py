@@ -32,7 +32,7 @@ class UserViewSet(viewsets.ModelViewSet):
         url_path='me',
     )
     def me_about(self, request):
-        """Вью-функция для изменения информации о себе по отдельному эндпойнту"""
+        """Функция для изменения информации о себе по отдельному эндпойнту"""
         user = request.user
         if request.method == 'PATCH':
             serializer = AboutSerializer(user, data=request.data, partial=True)
@@ -71,7 +71,8 @@ def signup(request):
         serializer = SignUpSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
-    create_send_confirmation_token(user=get_object_or_404(CustomUser, username=username),
+    create_send_confirmation_token(user=get_object_or_404(CustomUser,
+                                                          username=username),
                                    email=email)
     return Response(serializer.data, status=status.HTTP_200_OK)
 

@@ -42,8 +42,8 @@ class Title(models.Model):
     description = models.TextField(blank=True, verbose_name='Описание',
                                    null=True)
     genre = models.ManyToManyField(Genre, through='TitleGenres',
-                                    verbose_name='Slug жанра',
-                                    related_name='titles')
+                                   verbose_name='Slug жанра',
+                                   related_name='titles')
     category = models.ForeignKey(Category,
                                  on_delete=models.CASCADE,
                                  related_name='titles',
@@ -80,8 +80,10 @@ class Review(models.Model):
     score = models.PositiveSmallIntegerField(
         verbose_name='Рейтинг',
         validators=[
-            MinValueValidator(settings.MIN_SCORE_VALUE, 'Только значения от 1 до 10'),
-            MaxValueValidator(settings.MAX_SCORE_VALUE, 'Только значения от 1 до 10')
+            MinValueValidator(settings.MIN_SCORE_VALUE,
+                              'Только значения от 0 до 10'),
+            MaxValueValidator(settings.MAX_SCORE_VALUE,
+                              'Только значения от 0 до 10')
         ]
     )
     pub_date = models.DateTimeField(
