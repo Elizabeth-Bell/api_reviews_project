@@ -11,8 +11,7 @@ from rest_framework.response import Response
 
 from .mixins import BaseListCreateDestroyMixin
 from users.models import CustomUser
-from reviews.models import (Category, Genre, Title, Review,
-                            Comment)
+from reviews.models import (Category, Genre, Title, Review, Comment)
 from .permissions import (IsAdmin, IsAdminOrReadOnly, IsAdminModeratorAuthor)
 from .serializers import (CategorySerializer, GenreSerializer,
                           ReviewSerializer, CommentsSerializer,
@@ -24,8 +23,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 class ReviewViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Review"""
     serializer_class = ReviewSerializer
-    permission_classes = (IsAdminModeratorAuthor,
-    )
+    permission_classes = (IsAdminModeratorAuthor,)
 
     def title_get_or_404(self):
         return get_object_or_404(

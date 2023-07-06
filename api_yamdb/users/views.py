@@ -10,12 +10,12 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 
-from users.models import CustomUser
+from .models import CustomUser
 from reviews.models import (Category, Genre, Title, Review,
                             Comment)
 from api.permissions import (IsAdmin, IsAdminOrReadOnly, IsAdminModeratorAuthor)
-from users.serializers import (UserSerializer, AboutSerializer, CreateUserSerializer, TokenSerializer,
-                               SignUpSerializer)
+from .serializers import (UserSerializer, AboutSerializer, CreateUserSerializer, TokenSerializer,
+                          SignUpSerializer)
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
@@ -54,15 +54,7 @@ class UserViewSet(viewsets.ModelViewSet):
         )
 
 
-@api_view(['POST'])
-@permission_classes((permissions.AllowAny,))
-def signup(request):
-    serializer = SignUpSerializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    username = serializer.validated_data.get('username')
-    user = get_object_or_404(CustomUser, username=username)
-    email = serializer.validated_data.get('email')
+def create_send_confirmation_token(user, email):
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
         subject="Register on site YaMDb",
@@ -70,6 +62,22 @@ def signup(request):
         from_email=None,
         recipient_list=[email],
     )
+
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def signup(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    if CustomUser.objects.filter(username=username, email=email).exists():
+        user = get_object_or_404(CustomUser, username=username)
+        serializer = SignUpSerializer(user, data=request.data, partial=True)
+    else:
+        serializer = SignUpSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    create_send_confirmation_token(user=get_object_or_404(CustomUser, username=username),
+                                   email=email)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -89,4 +97,3 @@ def crate_token(request):
             status=status.HTTP_200_OK,
         )
     return Response("Не верный токен", status=status.HTTP_400_BAD_REQUEST)
-

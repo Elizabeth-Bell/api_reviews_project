@@ -4,12 +4,10 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from reviews.models import (Title, Genre, Category,
                             Comment, Review,
-                            TitleGenres)
+                            )
 
-from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-from users.models import CustomUser
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -31,7 +29,7 @@ class TitleSerializer(serializers.ModelSerializer):
     category = SlugRelatedField(slug_field='slug', queryset=Category.objects.all())
 
     class Meta:
-        fields = ('name', 'year', 'description', 'genres', 'category')
+        fields = ('id', 'name', 'year', 'description', 'genres', 'category')
         model = Title
 
 

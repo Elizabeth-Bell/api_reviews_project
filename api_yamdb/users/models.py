@@ -1,8 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
-from users.validators import validate_username
-from django.utils.translation import gettext_lazy as _
+from .validators import validate_username
 
 
 class CustomUserManager(BaseUserManager):
@@ -24,17 +23,20 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, role='', bio='', password=None):
+    def create_superuser(
+            self, email, username, password, role='admin', bio=''
+    ):
         user = self.create_user(
             email=self.normalize_email(email),
             username=username,
-            bio=bio,
-            role='admin'
-         )
+            password=password
+        )
+        user.role = role
+        user.bio = bio
+
         user.is_active = True
         user.is_staff = True
         user.is_superuser = True
-        user.set_password(password)
         user.save(using=self._db)
         return user
 
@@ -55,10 +57,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False,
                                        verbose_name='Суперпользователь')
     username = models.CharField(
-        _('username'),
+        verbose_name='имя пользователя',
         max_length=150,
         unique=True,
-        validators=[validate_username]
+        validators=[validate_username, ]
     )
     first_name = models.CharField(max_length=150, blank=True,
                                   verbose_name='Имя')
@@ -69,15 +71,29 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         unique=True,
     )
 
-    bio = models.CharField(
-        max_length=50,
+    bio = models.TextField(
         blank=True,
     )
     role = models.CharField(
         max_length=50,
         choices=USER_ROLE_CHOICES,
-        default=USER,
+        default='user',
     )
+
+    date_joined = models.DateTimeField(
+        verbose_name='дата создания',
+        auto_now_add=True
+    )
+    confirmation_code = models.CharField(
+        blank=True,
+        verbose_name='Код для авторизации',
+        max_length=39,
+    )
+    last_login = models.DateTimeField(
+        verbose_name='последний вход в систему',
+        auto_now=True
+    )
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'username'
@@ -100,7 +116,15 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     @property
     def is_admin(self):
-        return self.role == self.ADMINISTRATOR or self.is_superuser or self.is_staff
+        return (self.role == self.ADMINISTRATOR
+                or self.is_superuser
+                )
 
     def __str__(self):
         return self.username
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
+        return True

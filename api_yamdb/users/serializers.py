@@ -9,10 +9,11 @@ from reviews.models import (Title, Genre, Category,
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
-from users.models import CustomUser
+from .models import CustomUser
 
 
 class SignUpSerializer(serializers.ModelSerializer):
+
     class Meta:
         fields = ('username',
                   'email',
