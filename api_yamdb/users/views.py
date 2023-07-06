@@ -14,7 +14,8 @@ from users.models import CustomUser
 from reviews.models import (Category, Genre, Title, Review,
                             Comment)
 from api.permissions import (IsAdmin, IsAdminOrReadOnly, IsAdminModeratorAuthor)
-from users.serializers import (UserSerializer, AboutSerializer, CreateUserSerializer, TokenSerializer)
+from users.serializers import (UserSerializer, AboutSerializer, CreateUserSerializer, TokenSerializer,
+                               SignUpSerializer)
 
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
@@ -56,11 +57,12 @@ class UserViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def signup(request):
-    serializer = CreateUserSerializer(data=request.data)
+    serializer = SignUpSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
     username = serializer.validated_data.get('username')
     user = get_object_or_404(CustomUser, username=username)
+    email = serializer.validated_data.get('email')
     confirmation_code = default_token_generator.make_token(user)
     send_mail(
         subject="Register on site YaMDb",

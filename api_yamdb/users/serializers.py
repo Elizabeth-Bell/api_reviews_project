@@ -12,6 +12,14 @@ from rest_framework.relations import SlugRelatedField
 from users.models import CustomUser
 
 
+class SignUpSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('username',
+                  'email',
+                  )
+        model = CustomUser
+
+
 class UserSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices=CustomUser.USER_ROLE_CHOICES,
                                    default="user")
