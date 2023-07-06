@@ -70,11 +70,18 @@ class ListCreateDestroyViewSet(mixins.ListModelMixin,
 
 
 class TitleViewSet(viewsets.ModelViewSet):
+    queryset = Title.objects.annotate(
+        rating=Avg('reviews__score')).all()
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('name', 'year', 'genres__slug', 'category__slug')
     permission_classes = (IsAdminOrReadOnly,)
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ReadOnlyTitleSerializer
+        return TitleSerializer
 
 
 class GenreViewSet(viewsets.ModelViewSet):
