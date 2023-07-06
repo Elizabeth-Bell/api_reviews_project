@@ -1,5 +1,5 @@
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from users.validators import validate_username
 from django.utils.translation import gettext_lazy as _
@@ -29,7 +29,7 @@ class CustomUserManager(BaseUserManager):
             email=self.normalize_email(email),
             username=username,
             bio=bio,
-            role=role
+            role='admin'
          )
         user.is_active = True
         user.is_staff = True
@@ -39,7 +39,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
 
-class CustomUser(AbstractBaseUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     ADMINISTRATOR = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
@@ -48,7 +48,10 @@ class CustomUser(AbstractBaseUser):
         (MODERATOR, 'Модератор'),
         (USER, 'Пользователь'),
     ]
-    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True,
+                                    verbose_name='Активный')
+    is_staff = models.BooleanField(default=False,
+                                   verbose_name='Стафф')
     is_superuser = models.BooleanField(default=False,
                                        verbose_name='Суперпользователь')
     username = models.CharField(
