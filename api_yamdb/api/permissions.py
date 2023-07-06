@@ -49,7 +49,4 @@ class IsAdminOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
             request.user.role == CustomUser.ADMINISTRATOR or
             request.user.is_superuser
         )
-            request.user.is_admin or
-            request.user.is_superuser
-        )
         

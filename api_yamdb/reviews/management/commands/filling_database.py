@@ -1,7 +1,6 @@
-from django.core.management.base import BaseCommand
-
 import csv
 
+from django.core.management.base import BaseCommand
 from reviews.models import (Title, Genre, Category,
                             Comment, Review, TitleGenres)
 from users.models import CustomUser
@@ -21,6 +20,7 @@ DIFFICULT_PATH = {
 
 
 def category_genre_user_import():
+    """Функция для распаковки и создания объектов без полей ForeignKey"""
     for model, path in SIMPLE_PATH.items():
         with open(path, mode='r', encoding='utf-8') as csv_file:
             csv_reader = csv.DictReader(csv_file, delimiter=',')
@@ -28,6 +28,7 @@ def category_genre_user_import():
 
 
 def other_import():
+    """Функция для распаковки и создания объектов с полями ForeignKey"""
     for model, path in DIFFICULT_PATH.items():
         with open(path, mode='r', encoding='utf-8') as csv_file:
             csv_reader = csv.DictReader(csv_file, delimiter=',')
@@ -68,6 +69,7 @@ def other_import():
 
 
 class Command(BaseCommand):
+    """Создание команды для выполнения импорта csv-файла"""
 
     def handle(self, *args, **options):
         category_genre_user_import()

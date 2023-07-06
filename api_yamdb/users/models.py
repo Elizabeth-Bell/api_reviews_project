@@ -1,12 +1,15 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
+
 from .validators import validate_username
 
 
 class CustomUserManager(BaseUserManager):
+    """Кастомный менеджер"""
 
     def create_user(self, email, username, role='', bio='', password=None):
+        """Функция создания юзера"""
         if not email:
             raise ValueError('e-mail обязателен для регистрации')
         if not username:
@@ -26,12 +29,11 @@ class CustomUserManager(BaseUserManager):
     def create_superuser(
             self, email, username, password, role='admin', bio=''
     ):
+        """Функция создания суперюзера"""
         user = self.create_user(
             email=self.normalize_email(email),
             username=username,
             password=password,
-            # bio=bio,
-            # role='admin'
         )
         user.role = role
         user.bio = bio
@@ -43,6 +45,7 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
+    """Кастомная модель юзера"""
     ADMINISTRATOR = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
@@ -70,15 +73,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(
         max_length=254,
         unique=True,
+        verbose_name='email'
     )
 
     bio = models.TextField(
         blank=True,
+        verbose_name='Описание'
     )
     role = models.CharField(
         max_length=50,
         choices=USER_ROLE_CHOICES,
         default='user',
+        verbose_name='роль'
     )
     date_joined = models.DateTimeField(
         verbose_name='дата создания',
@@ -117,8 +123,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     @property
     def is_admin(self):
         return (self.role == self.ADMINISTRATOR
-                or self.is_superuser
-               )
+                or self.is_superuser)
 
     def __str__(self):
         return self.username

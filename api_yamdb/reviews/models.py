@@ -41,8 +41,9 @@ class Title(models.Model):
                                validators=[validate_year])
     description = models.TextField(blank=True, verbose_name='Описание',
                                    null=True)
-    genres = models.ManyToManyField(Genre, through='TitleGenres',
-                                    verbose_name='Slug жанра')
+    genre = models.ManyToManyField(Genre, through='TitleGenres',
+                                    verbose_name='Slug жанра',
+                                    related_name='titles')
     category = models.ForeignKey(Category,
                                  on_delete=models.CASCADE,
                                  related_name='titles',
@@ -50,9 +51,7 @@ class Title(models.Model):
                                  verbose_name='Slug категории'
                                  )
 
-
     class Meta:
-        ordering = ("year", "name")
         verbose_name = "Произведение"
         verbose_name_plural = "Произведения"
         default_related_name = "titles"
@@ -139,10 +138,5 @@ class TitleGenres(models.Model):
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
     title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
-    class Meta:
-        unique_together = [
-            'genre', 'title'
-        ]
-
     def __str__(self):
-        return f'{self.genre} {self.title}'
+        return f'{self.genre}, {self.title}'
