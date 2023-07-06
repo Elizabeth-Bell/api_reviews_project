@@ -29,11 +29,12 @@ class CustomUserManager(BaseUserManager):
         user = self.create_user(
             email=self.normalize_email(email),
             username=username,
-            password=password
+            password=password,
+            # bio=bio,
+            # role='admin'
         )
         user.role = role
         user.bio = bio
-
         user.is_active = True
         user.is_staff = True
         user.is_superuser = True
@@ -79,7 +80,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         choices=USER_ROLE_CHOICES,
         default='user',
     )
-
     date_joined = models.DateTimeField(
         verbose_name='дата создания',
         auto_now_add=True
@@ -118,7 +118,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def is_admin(self):
         return (self.role == self.ADMINISTRATOR
                 or self.is_superuser
-                )
+               )
 
     def __str__(self):
         return self.username

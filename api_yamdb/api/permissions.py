@@ -46,6 +46,10 @@ class IsAdminOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
     def has_object_permission(self, request, view, obj):
         return (
             request.method in permissions.SAFE_METHODS or
+            request.user.role == CustomUser.ADMINISTRATOR or
+            request.user.is_superuser
+        )
             request.user.is_admin or
             request.user.is_superuser
         )
+        

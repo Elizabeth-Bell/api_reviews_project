@@ -11,7 +11,7 @@ class TitleInline(admin.TabularInline):
 class TitleAdmin(admin.ModelAdmin):
     list_display = ('name', 'year', 'description', 'category')
     search_fields = ('name', 'description',)
-    list_filter = ('categories', 'year')
+    list_filter = ('category', 'year')
     empty_value_display = '-пусто-'
     inlines = [
         TitleInline,

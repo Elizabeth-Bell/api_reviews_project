@@ -16,7 +16,7 @@ class Category(models.Model):
         ordering = ("name",)
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        
+
     def __str__(self):
         return self.name
 
@@ -25,7 +25,7 @@ class Genre(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название жанра')
     slug = models.SlugField(max_length=50, verbose_name='Слаг жанра',
                             unique=True)
-    
+
     class Meta:
         ordering = ('name',)
         verbose_name = 'Жанр'
@@ -43,11 +43,14 @@ class Title(models.Model):
                                    null=True)
     genres = models.ManyToManyField(Genre, through='TitleGenres',
                                     verbose_name='Slug жанра')
-    category = models.ForeignKey(Category, on_delete=models.CASCADE,
-                                   related_name='titles',
-                                   verbose_name='Slug категории'
-                                   )
-    
+    category = models.ForeignKey(Category,
+                                 on_delete=models.CASCADE,
+                                 related_name='titles',
+                                 null=True,
+                                 verbose_name='Slug категории'
+                                 )
+
+
     class Meta:
         ordering = ("year", "name")
         verbose_name = "Произведение"
