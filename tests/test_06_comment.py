@@ -43,7 +43,10 @@ class Test06CommentAPI:
         first_review_comment_cnt = 0
 
         data = {}
-        response = user_client.post(url.format(title_id=titles[0]['id'], review_id=reviews[0]['id']), )
+        response = user_client.post(
+            url.format(title_id=titles[0]['id'], review_id=reviews[0]['id']),
+            data=data
+        )
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если POST-запрос пользователя с ролью `user` к '
             f'`{url}` содержит некорректные данные - должен вернуться ответ '
@@ -70,7 +73,9 @@ class Test06CommentAPI:
             'нет найдено в ответе или не является целым числом.'
         )
 
-        response = admin_client.post('/api/v1/titles/999/reviews/999/comments/')
+        response = admin_client.post(
+            '/api/v1/titles/999/reviews/999/comments/', data=post_data
+        )
         assert response.status_code == HTTPStatus.NOT_FOUND, (
             'Проверьте, что POST-запрос авторизованного пользователя к '
             f'комментариям под несуществующим отзывом через эндпоинт `{url}` '
@@ -340,11 +345,14 @@ class Test06CommentAPI:
             f'`{url}` возвращает ответ со статусом 200.'
         )
 
-        response = client.post(url.format(
-            title_id=titles[0]['id'],
-            review_id=reviews[0]['id'],
-            comment_id=comments[1]['id']
-        ))
+        response = client.post(
+            url.format(
+                title_id=titles[0]['id'],
+                review_id=reviews[0]['id'],
+                comment_id=comments[1]['id']
+            ),
+            data=new_data
+        )
         assert response.status_code == HTTPStatus.UNAUTHORIZED, (
             'Проверьте, что POST-запрос неавторизованного пользователя к '
             f'`{url}` возвращает ответ со статусом 401.'

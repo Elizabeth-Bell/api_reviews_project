@@ -147,7 +147,7 @@ class Test01UserAPI:
 
     def test_05_01_users_post_admin_bad_requests(self, admin_client, admin):
         empty_data = {}
-        response = admin_client.post('/api/v1/users/')
+        response = admin_client.post('/api/v1/users/', data=empty_data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если POST-запрос администратора к `/api/v1/users/` '
             'не содержит необходимых данных - должен вернуться ответ со '
@@ -158,7 +158,7 @@ class Test01UserAPI:
             'username': 'TestUser_noemail',
             'role': 'user'
         }
-        response = admin_client.post('/api/v1/users/')
+        response = admin_client.post('/api/v1/users/', data=no_email_data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если POST-запрос администратора к `/api/v1/users/` '
             'не содержит `email` - должен вернуться ответ со статусом 400.'
@@ -168,7 +168,7 @@ class Test01UserAPI:
             'email': 'valid_email@yamdb.fake',
             'role': 'user'
         }
-        response = admin_client.post('/api/v1/users/')
+        response = admin_client.post('/api/v1/users/', data=no_username_data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если POST-запрос администратора к `/api/v1/users/` '
             ' не содержит `username` - должен вернуться ответ со статусом 400.'
@@ -179,7 +179,7 @@ class Test01UserAPI:
             'role': 'user',
             'email': admin.email
         }
-        response = admin_client.post('/api/v1/users/')
+        response = admin_client.post('/api/v1/users/', data=duplicate_email)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если в POST-запросе администратора к `/api/v1/users/` '
             'передан `email` существующего пользователя - '
@@ -191,7 +191,7 @@ class Test01UserAPI:
             'role': 'user',
             'email': 'valid_test_email@yamdb.fake'
         }
-        response = admin_client.post('/api/v1/users/')
+        response = admin_client.post('/api/v1/users/', data=duplicate_username)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Если в POST-запросе администратора к `/api/v1/users/` '
             'передан `username` существующего пользователя '
@@ -202,7 +202,7 @@ class Test01UserAPI:
     def test_05_02_users_post_admin_user_creation(self, admin_client,
                                                   data, msg_modifier,
                                                   django_user_model):
-        response = admin_client.post('/api/v1/users/')
+        response = admin_client.post('/api/v1/users/', data=data)
         assert response.status_code == HTTPStatus.CREATED, (
             'Если POST-запрос администратора к `/api/v1/users/` содержит '
             f'корректные данные {msg_modifier}- должен вернуться ответ со '
@@ -230,7 +230,7 @@ class Test01UserAPI:
             'role': 'moderator',
             'email': 'testmoder2@yamdb.fake'
         }
-        response = admin_client.post('/api/v1/users/')
+        response = admin_client.post('/api/v1/users/', data=data)
         assert response.status_code == HTTPStatus.CREATED, (
             'Если POST-запрос администратора к `/api/v1/users/` '
             'содержит корректные данные - должен вернуться ответ со статусом '
@@ -255,7 +255,9 @@ class Test01UserAPI:
             'role': 'user',
             'email': 'testuser3@yamdb.fake'
         }
-        response = user_superuser_client.post('/api/v1/users/', )
+        response = user_superuser_client.post(
+            '/api/v1/users/', data=valid_data
+        )
         assert response.status_code == HTTPStatus.CREATED, (
             'Если POST-запрос суперпользователя к `/api/v1/users/` '
             'содержит корректные данные - должен вернуться ответ со статусом '

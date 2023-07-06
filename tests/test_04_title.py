@@ -32,7 +32,7 @@ class Test04TitleAPI:
             'статусом 400.'
         )
         data = {}
-        response = admin_client.post(url)
+        response = admin_client.post(url, data=data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, assert_msg
 
         invalid_data = {
@@ -42,7 +42,7 @@ class Test04TitleAPI:
             'category': categories[1]['slug'],
             'description': 'Угонял машины всю ночь и немного подустал.'
         }
-        response = admin_client.post(url)
+        response = admin_client.post(url, data=invalid_data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, assert_msg
 
         post_data_1 = {
@@ -52,7 +52,7 @@ class Test04TitleAPI:
             'category': categories[0]['slug'],
             'description': 'Рон Свонсон рекомендует.'
         }
-        response = admin_client.post(url)
+        response = admin_client.post(url, data=post_data_1)
         assert response.status_code == HTTPStatus.CREATED, (
             f'Если POST-запрос администратора к `{url}` '
             'содержит корректные данные - должен вернуться ответ со статусом '
@@ -67,7 +67,7 @@ class Test04TitleAPI:
             'category': categories[1]['slug'],
             'description': 'Угадай ревьюера по названию фильма.'
         }
-        response = admin_client.post(url)
+        response = admin_client.post(url, data=post_data_2)
         assert response.status_code == HTTPStatus.CREATED, (
             f'Если POST-запрос администратора к `{url}` '
             'содержит корректные данные - должен вернуться ответ со статусом '
@@ -147,7 +147,7 @@ class Test04TitleAPI:
             'category': categories[1]['slug'],
             'description': 'Дверь выдержала бы и двоих...'
         }
-        admin_client.post(url)
+        admin_client.post(url, data=data)
 
         response = admin_client.get(f'{url}?genre={genres[1]["slug"]}')
         data = response.json()
@@ -262,7 +262,7 @@ class Test04TitleAPI:
             'category': categories[0]['slug'],
             'description': 'Dragon Ball Z'
         }
-        response = admin_client.post(url)
+        response = admin_client.post(url, data=data)
         assert response.status_code == HTTPStatus.BAD_REQUEST, (
             'Убедитесь, что при обработке POST-запроса администратора к '
             f'`{url}` проверяется длина поля `name`: название произведения '
@@ -276,7 +276,7 @@ class Test04TitleAPI:
             'category': categories[0]['slug'],
             'description': 'Рон Свонсон рекомендует.'
         }
-        response = admin_client.post(url)
+        response = admin_client.post(url, data=data)
         assert response.status_code == HTTPStatus.CREATED, (
             f'Если POST-запрос администратора к `{url}` '
             'содержит корректные данные - должен вернуться ответ со статусом '
