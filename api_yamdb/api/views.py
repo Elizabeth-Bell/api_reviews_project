@@ -4,8 +4,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import (filters, status,
                             viewsets)
 from rest_framework.response import Response
-from reviews.models import (Category, Genre, Title, Review)
 
+from reviews.models import (Category, Genre, Title, Review)
 from .filters import TitleFilter
 from .mixins import ListCreateDestroyViewSet
 from .permissions import (IsAdminOrReadOnly, IsAdminModeratorAuthor)
