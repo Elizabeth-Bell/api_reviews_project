@@ -18,6 +18,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Review"""
     serializer_class = ReviewSerializer
     permission_classes = (IsAdminModeratorAuthor,)
+    http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_queryset(self):
         title_id = self.kwargs.get("title_id")
@@ -35,6 +36,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
     """ViewSet для модели Comments"""
     serializer_class = CommentsSerializer
     permission_classes = (IsAdminModeratorAuthor,)
+    http_method_names = ('get', 'post', 'patch', 'delete')
 
     def review_get_or_404(self):
         return get_object_or_404(
@@ -60,6 +62,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     filterset_fields = ('name', 'year', 'genres', 'category')
     filterset_class = TitleFilter
     permission_classes = (IsAdminOrReadOnly,)
+    http_method_names = ('get', 'post', 'patch', 'delete')
 
     def get_serializer_class(self):
         if self.action == 'create' or self.action == 'partial_update':
