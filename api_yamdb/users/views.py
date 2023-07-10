@@ -36,7 +36,9 @@ class UserViewSet(viewsets.ModelViewSet):
         user = request.user
         if request.method == 'PATCH':
             if not user.is_admin or user.is_superuser:
-                serializer = AboutSerializer(user, data=request.data, partial=True)
+                serializer = AboutSerializer(user,
+                                             data=request.data,
+                                             partial=True)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
                 return Response(
