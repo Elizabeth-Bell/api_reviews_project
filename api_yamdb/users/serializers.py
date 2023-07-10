@@ -33,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
         if value.casefold() == 'me':
             raise serializers.ValidationError('Такое имя запрещено')
         return value
-
+    
 
 class AboutSerializer(UserSerializer):
     """Сериалайзер для просмотра инфо о пользователе"""

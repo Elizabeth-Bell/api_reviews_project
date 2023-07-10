@@ -43,6 +43,8 @@ class UserViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_200_OK,
             )
         serializer = self.get_serializer(user)
+        if user.role == 'admin':
+            UserSerializer.save()
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
