@@ -35,7 +35,17 @@ class UserViewSet(viewsets.ModelViewSet):
         """Функция для изменения информации о себе по отдельному эндпойнту"""
         user = request.user
         if request.method == 'PATCH':
-            serializer = AboutSerializer(user, data=request.data, partial=True)
+            if not user.is_admin or user.is_superuser:
+                serializer = AboutSerializer(user,
+                                             data=request.data,
+                                             partial=True)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+                return Response(
+                    serializer.data,
+                    status=status.HTTP_200_OK,
+                )
+            serializer = UserSerializer(user, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(
